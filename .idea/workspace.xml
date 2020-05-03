@@ -3,6 +3,11 @@
   <component name="ChangeListManager">
     <list default="true" id="763f76ac-e1e6-46d3-92c2-a7c14099e6ef" name="Default Changelist" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/resources/logback-spring.xml" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/resources/logback-spring.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/application.properties" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/application.properties" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/com/sxw/blog/aspect/LogAspect$RequestLog.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/com/sxw/blog/aspect/LogAspect$RequestLog.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/com/sxw/blog/aspect/LogAspect.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/com/sxw/blog/aspect/LogAspect.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/logback-spring.xml" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/logback-spring.xml" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -50,7 +55,20 @@
     <property name="project.structure.side.proportion" value="0.0" />
     <property name="settings.editor.selected.configurable" value="MavenSettings" />
   </component>
-  <component name="RunManager">
+  <component name="RunManager" selected="Spring Boot.BlogApplication (1)">
+    <configuration name="BlogApplication (1)" type="SpringBootApplicationConfigurationType" factoryName="Spring Boot" temporary="true" nameIsGenerated="true">
+      <module name="sxwblog" />
+      <extension name="coverage">
+        <pattern>
+          <option name="PATTERN" value="com.sxw.blog.*" />
+          <option name="ENABLED" value="true" />
+        </pattern>
+      </extension>
+      <option name="SPRING_BOOT_MAIN_CLASS" value="com.sxw.blog.BlogApplication" />
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
     <configuration name="BlogApplication" type="SpringBootApplicationConfigurationType" factoryName="Spring Boot">
       <module name="blog" />
       <option name="SPRING_BOOT_MAIN_CLASS" value="com.sxw.blog.BlogApplication" />
@@ -58,6 +76,11 @@
         <option name="Make" enabled="true" />
       </method>
     </configuration>
+    <recent_temporary>
+      <list>
+        <item itemvalue="Spring Boot.BlogApplication (1)" />
+      </list>
+    </recent_temporary>
   </component>
   <component name="SvnConfiguration">
     <configuration />
@@ -70,7 +93,7 @@
       <option name="presentableId" value="Default" />
       <updated>1588491580329</updated>
       <workItem from="1588491581675" duration="1103000" />
-      <workItem from="1588511157643" duration="1153000" />
+      <workItem from="1588511157643" duration="1948000" />
     </task>
     <task id="LOCAL-00001" summary="2020-5-03 功能完善">
       <created>1588511701511</created>
@@ -79,7 +102,14 @@
       <option name="project" value="LOCAL" />
       <updated>1588511701511</updated>
     </task>
-    <option name="localTasksCounter" value="2" />
+    <task id="LOCAL-00002" summary="2020-5-03 功能完善">
+      <created>1588512380846</created>
+      <option name="number" value="00002" />
+      <option name="presentableId" value="LOCAL-00002" />
+      <option name="project" value="LOCAL" />
+      <updated>1588512380846</updated>
+    </task>
+    <option name="localTasksCounter" value="3" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -90,21 +120,61 @@
     <option name="LAST_COMMIT_MESSAGE" value="2020-5-03 功能完善" />
   </component>
   <component name="WindowStateProjectService">
-    <state x="388" y="0" key="CommitChangelistDialog2" timestamp="1588511955427">
+    <state x="388" y="0" key="CommitChangelistDialog2" timestamp="1588512377002">
       <screen x="0" y="0" width="1536" height="834" />
     </state>
-    <state x="388" y="0" key="CommitChangelistDialog2/0.0.1536.834@0.0.1536.834" timestamp="1588511955427" />
+    <state x="388" y="0" key="CommitChangelistDialog2/0.0.1536.834@0.0.1536.834" timestamp="1588512377002" />
+    <state x="147" y="62" key="DiffContextDialog" timestamp="1588512372493">
+      <screen x="0" y="0" width="1536" height="834" />
+    </state>
+    <state x="147" y="62" key="DiffContextDialog/0.0.1536.834@0.0.1536.834" timestamp="1588512372493" />
     <state x="549" y="158" key="FileChooserDialogImpl" timestamp="1588512308712">
       <screen x="0" y="0" width="1536" height="834" />
     </state>
     <state x="549" y="158" key="FileChooserDialogImpl/0.0.1536.834@0.0.1536.834" timestamp="1588512308712" />
-    <state x="361" y="137" key="Vcs.Push.Dialog.v2" timestamp="1588511742093">
+    <state width="1493" height="478" key="GridCell.Tab.0.bottom" timestamp="1588513108153">
       <screen x="0" y="0" width="1536" height="834" />
     </state>
-    <state x="361" y="137" key="Vcs.Push.Dialog.v2/0.0.1536.834@0.0.1536.834" timestamp="1588511742093" />
+    <state width="1493" height="478" key="GridCell.Tab.0.bottom/0.0.1536.834@0.0.1536.834" timestamp="1588513108153" />
+    <state width="1493" height="478" key="GridCell.Tab.0.center" timestamp="1588513108153">
+      <screen x="0" y="0" width="1536" height="834" />
+    </state>
+    <state width="1493" height="478" key="GridCell.Tab.0.center/0.0.1536.834@0.0.1536.834" timestamp="1588513108153" />
+    <state width="1493" height="478" key="GridCell.Tab.0.left" timestamp="1588513108152">
+      <screen x="0" y="0" width="1536" height="834" />
+    </state>
+    <state width="1493" height="478" key="GridCell.Tab.0.left/0.0.1536.834@0.0.1536.834" timestamp="1588513108152" />
+    <state width="1493" height="478" key="GridCell.Tab.0.right" timestamp="1588513108153">
+      <screen x="0" y="0" width="1536" height="834" />
+    </state>
+    <state width="1493" height="478" key="GridCell.Tab.0.right/0.0.1536.834@0.0.1536.834" timestamp="1588513108153" />
+    <state width="1493" height="478" key="GridCell.Tab.1.bottom" timestamp="1588513108153">
+      <screen x="0" y="0" width="1536" height="834" />
+    </state>
+    <state width="1493" height="478" key="GridCell.Tab.1.bottom/0.0.1536.834@0.0.1536.834" timestamp="1588513108153" />
+    <state width="1493" height="478" key="GridCell.Tab.1.center" timestamp="1588513108153">
+      <screen x="0" y="0" width="1536" height="834" />
+    </state>
+    <state width="1493" height="478" key="GridCell.Tab.1.center/0.0.1536.834@0.0.1536.834" timestamp="1588513108153" />
+    <state width="1493" height="478" key="GridCell.Tab.1.left" timestamp="1588513108153">
+      <screen x="0" y="0" width="1536" height="834" />
+    </state>
+    <state width="1493" height="478" key="GridCell.Tab.1.left/0.0.1536.834@0.0.1536.834" timestamp="1588513108153" />
+    <state width="1493" height="478" key="GridCell.Tab.1.right" timestamp="1588513108153">
+      <screen x="0" y="0" width="1536" height="834" />
+    </state>
+    <state width="1493" height="478" key="GridCell.Tab.1.right/0.0.1536.834@0.0.1536.834" timestamp="1588513108153" />
+    <state x="361" y="137" key="Vcs.Push.Dialog.v2" timestamp="1588512465908">
+      <screen x="0" y="0" width="1536" height="834" />
+    </state>
+    <state x="361" y="137" key="Vcs.Push.Dialog.v2/0.0.1536.834@0.0.1536.834" timestamp="1588512465908" />
     <state x="645" y="151" key="com.intellij.openapi.vcs.changes.SpecificFilesViewDialog" timestamp="1588511382355">
       <screen x="0" y="0" width="1536" height="834" />
     </state>
     <state x="645" y="151" key="com.intellij.openapi.vcs.changes.SpecificFilesViewDialog/0.0.1536.834@0.0.1536.834" timestamp="1588511382355" />
+    <state x="534" y="317" key="git4idea.remote.GitConfigureRemotesDialog" timestamp="1588512424476">
+      <screen x="0" y="0" width="1536" height="834" />
+    </state>
+    <state x="534" y="317" key="git4idea.remote.GitConfigureRemotesDialog/0.0.1536.834@0.0.1536.834" timestamp="1588512424476" />
   </component>
 </project>
