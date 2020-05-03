@@ -1,7 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="763f76ac-e1e6-46d3-92c2-a7c14099e6ef" name="Default Changelist" comment="" />
+    <list default="true" id="763f76ac-e1e6-46d3-92c2-a7c14099e6ef" name="Default Changelist" comment="">
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+    </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -42,11 +44,11 @@
     <property name="RunOnceActivity.ShowReadmeOnStart" value="true" />
     <property name="WebServerToolWindowFactoryState" value="false" />
     <property name="aspect.path.notification.shown" value="true" />
-    <property name="last_opened_file_path" value="$PROJECT_DIR$" />
+    <property name="last_opened_file_path" value="$PROJECT_DIR$/pom.xml" />
     <property name="project.structure.last.edited" value="Project" />
     <property name="project.structure.proportion" value="0.0" />
     <property name="project.structure.side.proportion" value="0.0" />
-    <property name="settings.editor.selected.configurable" value="MavenSettings" />
+    <property name="settings.editor.selected.configurable" value="org.jetbrains.plugins.github.ui.GithubSettingsConfigurable" />
   </component>
   <component name="RunManager" selected="Spring Boot.BlogApplication (1)">
     <configuration name="BlogApplication (1)" type="SpringBootApplicationConfigurationType" factoryName="Spring Boot" temporary="true" nameIsGenerated="true">
@@ -87,6 +89,7 @@
       <updated>1588491580329</updated>
       <workItem from="1588491581675" duration="1103000" />
       <workItem from="1588511157643" duration="2797000" />
+      <workItem from="1588514078216" duration="826000" />
     </task>
     <task id="LOCAL-00001" summary="2020-5-03 功能完善">
       <created>1588511701511</created>
@@ -116,7 +119,14 @@
       <option name="project" value="LOCAL" />
       <updated>1588513933110</updated>
     </task>
-    <option name="localTasksCounter" value="5" />
+    <task id="LOCAL-00005" summary="2020-5-03 功能完善2">
+      <created>1588514114156</created>
+      <option name="number" value="00005" />
+      <option name="presentableId" value="LOCAL-00005" />
+      <option name="project" value="LOCAL" />
+      <updated>1588514114156</updated>
+    </task>
+    <option name="localTasksCounter" value="6" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -124,17 +134,18 @@
   </component>
   <component name="VcsManagerConfiguration">
     <MESSAGE value="2020-5-03 功能完善" />
-    <option name="LAST_COMMIT_MESSAGE" value="2020-5-03 功能完善" />
+    <MESSAGE value="2020-5-03 功能完善2" />
+    <option name="LAST_COMMIT_MESSAGE" value="2020-5-03 功能完善2" />
   </component>
   <component name="WindowStateProjectService">
     <state x="223" y="72" width="1102" height="689" key="#com.intellij.execution.impl.EditConfigurationsDialog" timestamp="1588513165992">
       <screen x="0" y="0" width="1536" height="834" />
     </state>
     <state x="223" y="72" width="1102" height="689" key="#com.intellij.execution.impl.EditConfigurationsDialog/0.0.1536.834@0.0.1536.834" timestamp="1588513165992" />
-    <state x="388" y="0" key="CommitChangelistDialog2" timestamp="1588513931898">
+    <state x="388" y="0" key="CommitChangelistDialog2" timestamp="1588514113141">
       <screen x="0" y="0" width="1536" height="834" />
     </state>
-    <state x="388" y="0" key="CommitChangelistDialog2/0.0.1536.834@0.0.1536.834" timestamp="1588513931898" />
+    <state x="388" y="0" key="CommitChangelistDialog2/0.0.1536.834@0.0.1536.834" timestamp="1588514113141" />
     <state x="147" y="62" key="DiffContextDialog" timestamp="1588513904695">
       <screen x="0" y="0" width="1536" height="834" />
     </state>
@@ -175,10 +186,14 @@
       <screen x="0" y="0" width="1536" height="834" />
     </state>
     <state width="1493" height="336" key="GridCell.Tab.1.right/0.0.1536.834@0.0.1536.834" timestamp="1588513959249" />
-    <state x="361" y="137" key="Vcs.Push.Dialog.v2" timestamp="1588512465908">
+    <state x="277" y="62" key="SettingsEditor" timestamp="1588514907537">
       <screen x="0" y="0" width="1536" height="834" />
     </state>
-    <state x="361" y="137" key="Vcs.Push.Dialog.v2/0.0.1536.834@0.0.1536.834" timestamp="1588512465908" />
+    <state x="277" y="62" key="SettingsEditor/0.0.1536.834@0.0.1536.834" timestamp="1588514907537" />
+    <state x="361" y="137" key="Vcs.Push.Dialog.v2" timestamp="1588514131874">
+      <screen x="0" y="0" width="1536" height="834" />
+    </state>
+    <state x="361" y="137" key="Vcs.Push.Dialog.v2/0.0.1536.834@0.0.1536.834" timestamp="1588514131874" />
     <state x="645" y="151" key="com.intellij.openapi.vcs.changes.SpecificFilesViewDialog" timestamp="1588511382355">
       <screen x="0" y="0" width="1536" height="834" />
     </state>
