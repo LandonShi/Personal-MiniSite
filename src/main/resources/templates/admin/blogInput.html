@@ -1,0 +1,215 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.w3.org/1999/xhtml">
+<head>
+    <meta charset="utf-8">
+    <title>编辑博客</title>
+    <link rel="stylesheet" th:href="@{/css/me.css}">
+    <link rel="stylesheet" th:href="@{/css/animate.css}" />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/semantic-ui/2.2.4/semantic.min.css">
+    <link rel="stylesheet" th:href="@{/lib/editormd/css/editormd.css}">
+</head>
+<body style="background-color: #dedede">
+    <div id="workArea">
+        <div class="m-padded-tb-big animated fadeIn" style="width: 100%;">
+            <div class="ui container">
+                <div class="ui middle aligned two column grid">
+                    <div class="column">
+                        <a class="ui button green mini" href="#">分类管理</a>
+                        <a class="ui button green mini" href="#">博客管理</a>
+                        <a class="ui button green mini" href="#">图集管理</a>
+                        <a class="ui button green mini" href="#">信息管理</a>
+                    </div>
+                    <div class="column right aligned">
+                        <a class="ui button orange mini" onclick="window.history.go(-1)" >返回</a>
+                        <a @click="add(statue2)" class="ui button orange mini">存为草稿</a>
+                        <a @click="add(statue1)" class="ui button orange mini">发布</a>
+                        <a class="ui button orange mini" href="#" th:text="${session.user.nickname}"></a>
+                        <a class="ui button orange mini" href="admin_logout" >退出</a>
+                    </div>
+                </div>
+
+                <div class="ui attached segment" style="border: none;margin-top: 20px;">
+                    <div class="ui attached segment" style="border: none;">
+                        <form class="ui form">
+                            <div class="two fields">
+                                <div class="field">
+                                    <div class="ui labeled input">
+                                        <div class="ui label">标题</div>
+                                        <input v-model.trim="bean.title" type="text" name="title"/>
+                                    </div>
+                                </div>
+                                <div class="required field">
+                                    <div class="ui label red">上传首图</div>
+                                    <div class="ui button mini">文件浏览</div>
+                                    <input accept="image/*" id="fileInput" type="file" name="image" @change="getFile($event)"
+                                           style="opacity: 0;width: 80px;height: 25px;margin-left: -80px;" />
+                                    <a href="#">{{fileName}}</a>
+                                </div>
+                            </div>
+                            <div class="two fields">
+                                <div class="field ">
+                                    <div class="ui labeled input">
+                                        <div class="ui label">分类</div>
+                                        <select v-model="bean.type.id" class="ui search dropdown">
+                                            <option v-for="type in types" :value="type.id" :key="type.id">
+                                                {{ type.name}}
+                                            </option>
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="field">
+                                    <div class="ui labeled input">
+                                        <div class="ui label">状态</div>
+                                        <select v-model="bean.flag" class="ui search dropdown">
+                                            <option value="转载">转载</option>
+                                            <option value="原创">原创</option>
+                                            <option value="翻译">翻译</option>
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+            <div class="ui container">
+                <div class="ui attached segment" style="border: none;">
+                    <div class="required field">
+                        <div class="page-content" id="md-content" style="z-index: 5 !important;">
+                            <textarea v-model="bean.content" name="content"  style="display: none"></textarea>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script type="text/javascript" th:src="@{/js/jquery.min.js}" ></script>
+    <script type="text/javascript" th:src="@{/js/vue.min.js}"></script>
+    <script type="text/javascript" th:src="@{/js/axios.min.js}"></script>
+    <script type="text/javascript" th:src="@{/lib/editormd/editormd.js}"></script>
+    <script type="text/javascript" th:src="@{/js/semantic.min.js}"></script>
+    <script type="text/javascript">
+        $(function () {
+            const data1 = {
+                uri: 'blogs',
+                bean: {id:0, title:'', flag:'',content:'',type:{id:0, name:''}},
+                file: '',
+                fileName: '',   //文件名
+                types: [],
+                statue1: 'published',
+                statue2: 'unpublished'
+            };
+            const vue = new Vue({
+                el: '#workArea',
+                data: data1,
+                mounted: function () {
+                    this.getType();  //获取文章分类专题
+                },
+                methods: {
+                    //获取文章分类专题
+                    getType: function() {
+                        let url = "types";
+                        axios.get(url).then(function (response) {
+                            vue.types = response.data;
+                        })
+                    },
+                    add: function(obj) {
+                        let url = "blogs?obj=" + obj;
+                        this.bean.content = $('.editormd-markdown-textarea').val();
+                        let content = this.bean.content;
+                        if(this.bean.title.length === 0) {
+                            alert("请输入标题");
+                            return;
+                        }
+                        if(this.bean.flag.length === 0) {
+                            alert("请选择文章状态");
+                            return;
+                        }
+                        if(this.bean.type.id.length === 0) {
+                            alert("请选择隶属分类");
+                            return;
+                        }
+                        if(this.file === null) {
+                            alert("请先上传首图");
+                            return;
+                        }
+                        let form = new FormData();
+                        form.append("title", this.bean.title);  //标题
+                        form.append("content", content);  //内容
+                        form.append("flag", this.bean.flag);  //状态
+                        form.append("tid", this.bean.type.id);  //分类id
+                        form.append("image", this.file);  //首图地址;
+                        axios.post(url,form).then(function () {
+                            alert("操作成功！")
+                            window.location.href = "fore_blog_list";
+                        });
+                    },
+                    getFile: function (event) {
+                        this.file = event.target.files[0];
+                        vue.fileName = event.target.files[0].name;
+                    }
+                }
+            });
+
+            //初始化Markdown编辑器
+            let contentEditor;
+            contentEditor = editormd("md-content", {
+                placeholder : "     开始书写您的文章...",
+                width   : "100%",
+                height  : 640,
+                syncScrolling : "single",
+                path    : "lib/editormd/lib/",
+                emoji : true,  //开启表情
+                tocm : true, // Using [TOCM]
+                codeFold : true,  //代码折叠
+                saveHTMLToTextarea : true,
+                htmlDecode      : "style,script,iframe",
+                tex : true,                   // 开启科学公式TeX语言支持，默认关闭
+                flowChart : true,             // 开启流程图支持，默认关闭
+                sequenceDiagram : true,       // 开启时序/序列图支持，默认关闭,
+                dialogLockScreen : false,     // 设置弹出层对话框不锁屏，全局通用，默认为true
+                dialogShowMask : false,       // 设置弹出层对话框显示透明遮罩层，全局通用，默认为true
+                dialogDraggable : false,      // 设置弹出层对话框不可拖动，全局通用，默认为true
+                dialogMaskOpacity : 0.4,      // 设置透明遮罩层的透明度，全局通用，默认值为0.1
+                dialogMaskBgColor : "#000",   // 设置透明遮罩层的背景颜色，全局通用，默认为#fff
+                imageUpload : true,
+                imageFormats : ["jpg", "jpeg", "gif", "png", "bmp", "webp"],
+                imageUploadURL : "uptextimg", //这个是上传图片时的访问地址
+                onload: function() {
+                    console.log('onload', this);
+                }
+            });
+        })
+
+        //获取地址栏参数的函数
+        function getUrlParms(para){
+            let search = location.search; //页面URL的查询部分字符串
+            let arrPara=new Array(); //参数数组。数组单项为包含参数名和参数值的字符串，如“para=value”
+            let arrVal=new Array(); //参数值数组。用于存储查找到的参数值
+
+            if(search!=""){
+                let index=0;
+                search=search.substr(1); //去除开头的“?”
+                arrPara=search.split("&");
+
+                for(i in arrPara){
+                    let paraPre=para+"="; //参数前缀。即参数名+“=”，如“para=”
+                    if(arrPara[i].indexOf(paraPre)==0&& paraPre.length<arrPara[i].length){
+                        arrVal[index]=decodeURI(arrPara[i].substr(paraPre.length)); //顺带URI解码避免出现乱码
+                        index++;
+                    }
+                }
+            }
+
+            if(arrVal.length===1){
+                return arrVal[0];
+            }else if(arrVal.length===0){
+                return null;
+            }else{
+                return arrVal;
+            }
+        }
+    </script>
+</body>
+</html>

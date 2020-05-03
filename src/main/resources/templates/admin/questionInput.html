@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.w3.org/1999/xhtml">
+<head>
+    <meta charset="utf-8">
+    <title>写文章</title>
+    <link rel="stylesheet" type="text/css" th:href="@{/css/me.css}">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/semantic-ui/2.2.4/semantic.min.css">
+    <link rel="stylesheet" type="text/css" th:href="@{/lib/editormd/css/editormd.css}">
+
+</head>
+<body style="background: #f7f7f7">
+    <div id="workArea">
+        <div class="m-padded-tb-big animated fadeIn" style="width: 100%;">
+            <div class="ui container">
+                <div class="ui middle aligned two column grid">
+                    <div class="column">
+                        <a class="ui red tag label mini">编辑帖子</a>
+                        <a href="fore_question_list" class="ui button red mini">社区交流</a>
+                        <a class="ui button red mini" th:if="${null!=session.user}" href="personalHomepage">
+                            {{user.nickname}}
+                        </a>
+                    </div>
+                    <div class="column right aligned">
+                        <a class="ui button mini red" onclick="window.history.go(-1)" >
+                           返回
+                        </a>
+                        <a class="ui button mini red"><i class="edit icon"></i>保存草稿</a>
+                        <a @click="add" class="ui button red mini"><i class="send icon"></i>发布</a>
+                    </div>
+                </div>
+                <div class="ui attached error form segment" style="border: none;margin-top: 20px;">
+                    <div class="ui attached segment" style="border: none;">
+                        <div class="registerErrorMessageDiv m-shadow-small">
+                            <div class="ui green message">
+                                <div class="header">用户您好</div>
+                                <span class="errorMessage">
+                                    请勿发布含违规内容的帖子。如发布求助帖，请将问题出现的截图、代码提交出来，这都能有效提高问题解决的效率哦！</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="ui attached segment" style="border: none;">
+                        <form class="ui form">
+                            <div class="two fields">
+                                <div class="field">
+                                    <div class="ui labeled input">
+                                        <div class="ui label">标题</div>
+                                        <input v-model.trim="bean.title" type="text" name="title"/>
+                                    </div>
+                                </div>
+                                <div class="required field">
+                                    <div class="ui label red">上传首图</div>
+                                    <div class="ui button mini">文件浏览</div>
+                                    <input accept="image/*" id="fileInput" type="file" name="image" @change="getFile($event)"
+                                           style="opacity: 0;width: 80px;height: 25px;margin-left: -80px;" />
+                                    <a href="#">{{fileName}}</a>
+                                </div>
+                            </div>
+                            <div class="two fields">
+                                <div class="field ">
+                                    <div class="ui labeled input">
+                                        <div class="ui label">分类</div>
+                                        <select v-model="bean.type.id" class="ui search dropdown">
+                                            <option v-for="type in types" :value="type.id" :key="type.id">
+                                                {{ type.name}}
+                                            </option>
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="field">
+                                    <div class="ui labeled input">
+                                        <div class="ui label">状态</div>
+                                        <select v-model="bean.flag" class="ui search dropdown">
+                                            <option value="转载">转载</option>
+                                            <option value="原创">原创</option>
+                                            <option value="翻译">翻译</option>
+                                            <option value="求助">求助</option>
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+            <div class="ui container">
+                <div class="ui attached segment" style="border: none;">
+                    <div class="required field">
+                        <div class="page-content" id="md-content" style="z-index: 5 !important;">
+                            <textarea name="content"  style="display: none"></textarea>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script type="text/javascript" th:src="@{/js/jquery.min.js}" ></script>
+    <script type="text/javascript" th:src="@{/js/vue.min.js}"></script>
+    <script type="text/javascript" th:src="@{/js/axios.min.js}"></script>
+    <script type="text/javascript" th:src="@{/lib/editormd/editormd.js}"></script>
+    <script type="text/javascript" th:src="@{/js/semantic.min.js}"></script>
+    <script>
+        $(function() {
+            var data1 = {
+                uri: 'types',
+                bean: {id:0, title:'', flag: '',type:{id:''}},
+                types: [],
+                file:'',
+                fileName:'',   //文件名
+                typies: [],
+                user: ''
+            };
+
+            var vue = new Vue({
+                el: '#workArea',
+                data: data1,
+                mounted:function(){
+                    this.getType();
+                },
+                methods: {
+                    getType: function() {
+                        var url = this.uri;
+                        axios.get(url).then(function (response) {
+                            vue.types = response.data;
+                        });
+                    },
+                    add: function() {
+                        var url = "blogs";
+                        this.bean.content = $('.editormd-markdown-textarea').val();
+                        var content = this.bean.content;
+                        var form = new FormData();
+                        form.append("title",this.bean.title);  //标题
+                        form.append("content",content);  //内容
+                        form.append("flag",this.bean.flag);  //状态
+                        form.append("tid",this.bean.type.id);  //分类id
+                        form.append("image",this.file);  //首图地址;
+                        axios.post(url,form).then(function () {
+                            alert("发表成功！")
+                            window.location.href = "fore_question_list";
+                        });
+                    },
+                    getFile: function (event) {
+                        this.file = event.target.files[0];
+                        vue.fileName = event.target.files[0].name;
+                    }
+                }
+            });
+
+            //初始化Markdown编辑器
+            var contentEditor;
+            contentEditor = editormd("md-content", {
+                placeholder : "     开始书写您的文章...",
+                width   : "100%",
+                height  : 640,
+                syncScrolling : "single",
+                path    : "lib/editormd/lib/",
+                emoji : true,  //开启表情
+                tocm : true, // Using [TOCM]
+                codeFold : true,  //代码折叠
+                saveHTMLToTextarea : true,
+                htmlDecode      : "style,script,iframe",
+                tex : true,                   // 开启科学公式TeX语言支持，默认关闭
+                flowChart : true,             // 开启流程图支持，默认关闭
+                sequenceDiagram : true,       // 开启时序/序列图支持，默认关闭,
+                dialogLockScreen : false,     // 设置弹出层对话框不锁屏，全局通用，默认为true
+                dialogShowMask : false,       // 设置弹出层对话框显示透明遮罩层，全局通用，默认为true
+                dialogDraggable : false,      // 设置弹出层对话框不可拖动，全局通用，默认为true
+                dialogMaskOpacity : 0.4,      // 设置透明遮罩层的透明度，全局通用，默认值为0.1
+                dialogMaskBgColor : "#000",   // 设置透明遮罩层的背景颜色，全局通用，默认为#fff
+                imageUpload : true,
+                imageFormats : ["jpg", "jpeg", "gif", "png", "bmp", "webp"],
+                imageUploadURL : "uptextimg", //这个是上传图片时的访问地址
+                onload: function() {
+                    console.log('onload', this);
+                }
+            });
+        });
+    </script>
+</body>
+</html>

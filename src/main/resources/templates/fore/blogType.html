@@ -1,0 +1,218 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.w3.org/1999/xhtml">
+<head>
+    <meta charset="UTF-8">
+    <title>分类 查询</title>
+    <link rel="stylesheet" type="text/css" th:href="@{/css/me.css}">
+    <link rel="stylesheet" type="text/css" th:href="@{/css/animate.css}" />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/semantic-ui/2.2.4/semantic.min.css">
+</head>
+<body style="background: #e8e8e8">
+    <!-- 导航 -->
+    <div id="workArea">
+        <div class="top02" style="background-color:#fff;">
+            <div class="top02_center" style="width:1200px;margin:0 auto;">
+                <div class="nav">
+                    <ul>
+                        <li><a href="fore_blog_list">首页</a></li>
+                        <li><a href="fore_blog_type">分类查询</a></li>
+                        <li><a href="fore_question_travel">旅行日记</a></li>
+                        <li><a href="fore_time_axis">归档图案</a></li>
+                        <li><a href="fore_blog_author">关于我</a></li>
+                    </ul>
+                    <ul>
+                        <li style="width: 45px;float:right;">
+                            <a href="admin_logout" th:if="${null != session.user}" style="font-size: 12px;float: left; width: 45px;color: darkorange;">注销</a>
+                        </li>
+                        <li style="width: 70px;float:right;">
+                            <a th:if="${null != session.user}" th:text="${session.user.nickname}" style="font-size: 12px;float: left; width: 70px;color: darkorange;"></a>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+        <div style="height: 40px;"></div>
+
+        <!--中间内容-->
+        <div id="waypoint">
+            <div  class="m-container-small m-padded-tb-big animated fadeIn">
+                <div class="ui container">
+                    <!--header-->
+                    <div class="ui attached segment m-padded-tb-large" style="border: none;">
+                        <div v-for="type in types" class="ui labeled button m-margin-tb-tiny">
+                            <a @click="getBlogs(type.id)" href="#"  class="ui basic orange button">{{type.name}}</a>
+                        </div>
+                    </div>
+                    <div class="m-container m-padded-tb-big animated fadeIn">
+                        <div class="ui stackable grid m-shadow-small" >
+                            <div v-if="blogs.length != 0" class="ui attached segment" style="border: none;">
+                                <div v-for="blog in blogs" class="ui padded vertical segment m-padded-tb">
+                                    <div class="ui middle aligned mobile reversed stackable grid" style="border-bottom: solid 1px lightgray;">
+                                        <div class="five wide column">
+                                            <a :href="'fore_blog_detail?bid=' + blog.id">
+                                                <img :src="'img/picture/' + blog.id + '.jpg'" alt="" class="ui rounded image">
+                                            </a>
+                                        </div>
+                                        <div class="eleven wide column">
+                                            <h3 class="ui header title_a">
+                                                <a :href="'fore_blog_detail?bid=' + blog.id">
+                                                    <span style="color: green;font-weight: 400;font-size: 14px">{{blog.flag}}</span>
+                                                    {{blog.title}}
+                                                </a>
+                                            </h3>
+                                            <p class="m-text" style="font-size: 12px;">
+                                                {{ blog.content.substring(0,120)}}
+                                            </p>
+                                            <div class="ui grid">
+                                                <div class="eleven wide column">
+                                                    <div class="ui mini horizontal link list">
+                                                        <div class="item">
+                                                            <i class="calendar icon"></i> {{blog.createDate}}
+                                                        </div>
+                                                        <div class="item">
+                                                            <i class="eye icon"></i>{{blog.views}}
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div v-else class="ui attached segment" style="border: none;">
+                                <div class="ui middle aligned two column grid" style="text-align: center">
+                                    <div class="ui attached segment" style="text-align: center; border: none;">
+                                        <img src="img/other/cry1.png" style="width: 40px;" alt="没有" />
+                                        <br>
+                                        <span style="color: grey; font-size: 13px; font-family: 'Comic Sans MS'">no blogs...</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- 辅助工具栏 -->
+        <div id="toolbar" class="m-padded m-fixed m-right-bottom-big toolbar animated fadeInLeft" style="display: none">
+            <div class="ui vertical icon buttons">
+                <div class="ui icon button">
+                    <a title="首页" style="color: white" :class="{ disabled: pagination.first }" class="icon item" href="#nowhere" @click="jump('first')">
+                        <i class="angle double left icon green"></i>
+                    </a>
+                </div>
+                <div class="ui icon button">
+                    <a title="上一页" style="color: white" :class="{ disabled: !pagination.hasPrevious }" class="icon item">
+                        <i class="angle left icon green"></i>
+                    </a>
+                </div>
+                <div class="ui icon button disabled item green" v-for="i in pagination.navigatepageNums">
+                    <a href="#nowhere" @click="jumpByNumber(i-1)" style="color: white">{{i}}</a>
+                </div>
+                <div class="ui icon button">
+                    <a title="下一页" style="color: white" :class="{ disabled: !pagination.hasNext }" class="icon item" href="#nowhere" @click="jump('next')">
+                        <i class="angle right icon green"></i>
+                    </a>
+                </div>
+                <div class="ui icon button">
+                    <a title="尾页" style="color: white" :class="{ disabled: pagination.last }" class="icon item" href="#nowhere" @click="jump('last')">
+                        <i class="angle double right icon green"></i>
+                    </a>
+                </div>
+                <div id="toTop-button" class="ui icon button"><i class="chevron up icon green"></i></div>
+            </div>
+        </div>
+    </div>
+    <script type="text/javascript" th:src="@{/js/jquery.min.js}" ></script>
+    <script type="text/javascript" th:src="@{/js/semantic.min.js}"></script>
+    <script src="//cdn.jsdelivr.net/npm/jquery.scrollto@2.1.2/jquery.scrollTo.min.js"></script>
+    <script type="text/javascript" th:src="@{/lib/waypoints/jquery.waypoints.js}"></script>
+    <script type="text/javascript" th:src="@{/js/vue.min.js}"></script>
+    <script type="text/javascript" th:src="@{/js/axios.min.js}"></script>
+    <script type="text/javascript">
+        $(function() {
+            var data1 = {
+                uri: 'types',
+                bean: {id:0, title:'', content:'', flag: '',type:{id:''}},
+                types: [],
+                blogs: [],
+                pagination: {}
+            };
+            var vue = new Vue({
+                el: '#workArea',
+                data: data1,
+                mounted: function () {
+                    this.getType();
+                    this.list(0);
+                },
+                methods: {
+                    //获取所有分类
+                    getType: function () {
+                        let url = "foreTypes";
+                        axios.get(url).then(function (response) {
+                            vue.types = response.data;
+                        })
+                    },
+                    //获得全部文章
+                    list: function(start) {
+                        let url = "blogs?start=" + start;
+                        axios.get(url).then(function (response) {
+                            vue.pagination = response.data;
+                            vue.blogs = response.data.content;
+                        })
+                    },
+                    //获取某个分类下文章列表
+                    getBlogs: function (tid) {
+                        let url = "typeBlogs/" + tid;
+                        axios.get(url).then(function (response) {
+                            vue.blogs = response.data;
+                        })
+                    },
+                    //跳转函数
+                    jump: function(page){
+                        jump(page,vue);
+                    },
+                    //跳转函数
+                    jumpByNumber: function(start){
+                        jumpByNumber(start,vue);
+                    }
+                }
+            });
+            //返回顶部
+            $('#toTop-button').click(function () {
+                $(window).scrollTo(0,500);
+            });
+            //顶点跟踪
+            var waypoint = new Waypoint({
+                element: document.getElementById('waypoint'),
+                handler: function (direction) {
+                    if (direction === 'down') {
+                        $('#toolbar').show(100);
+                    } else {
+                        $('#toolbar').fadeOut(100);
+                    }
+                }
+            });
+            //跳转函数
+            function jump(page,vue){
+                if('first'=== page && !vue.pagination.first)
+                    vue.list(0);
+
+                else if('pre'=== page &&	vue.pagination.hasPrevious )
+                    vue.list(vue.pagination.number-1);
+
+                else if('next'=== page && vue.pagination.hasNext)
+                    vue.list(vue.pagination.number+1);
+
+                else if('last'=== page && !vue.pagination.last)
+                    vue.list(vue.pagination.totalPages-1);
+            }
+            //跳转函数
+            function jumpByNumber(start,vue){
+                if(start !== vue.pagination.number)
+                    vue.list(start);
+            }
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.w3.org/1999/xhtml">
+<head>
+    <meta charset="UTF-8">
+    <title>图集 编辑</title>
+    <link rel="stylesheet" th:href="@{/css/me.css}">
+    <link rel="stylesheet" th:href="@{/css/animate.css}" />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/semantic-ui/2.2.4/semantic.min.css">
+</head>
+<body style="background-color: #dedede">
+    <div id="workArea">
+        <div class="top02" style="background-color:#fff;">
+            <div class="top02_center" style="width:1200px;margin:0 auto;">
+                <div class="nav">
+                    <ul>
+                        <li ><a href="admin_type_list">分类管理</a></li>
+                        <li ><a href="admin_blog_list">博客管理</a></li>
+                        <li ><a href="admin_atlas_list">图集管理</a></li>
+                        <li ><a href="admin_author_info">信息管理</a></li>
+                    </ul>
+                    <ul>
+                        <li style="width: 78px;float:right;">
+                            <a style="font-size: 12px;float: left; width: 75px;color: darkorange;" href="admin_logout" >
+                                退出
+                            </a>
+                        </li>
+                        <li style="width: 78px;float:right;">
+                            <a style="font-size: 12px;float: left; width: 75px;color: darkorange;" href="#" th:text="${session.user.nickname}">
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+        <div style="height: 40px;"></div>
+        <div class="m-container m-padded-tb-big">
+            <div class="ui container">
+                <div class="m-container-small m-padded-tb-big animated fadeIn">
+                    <div class="ui container">
+                        <form class="ui form">
+                            <div class=" field">
+                                <div class="ui left labeled input">
+                                    <label class="ui teal basic label">名称</label>
+                                    <input v-model.trim="atlas.name" type="text" name="name" placeholder="图集名称">
+                                </div>
+                            </div>
+                            <div class="ui right aligned container">
+                                <a class="ui button mini orange" onclick="window.history.go(-1)" >返回</a>
+                                <a @click="update" class="ui teal mini button">提交</a>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <script type="text/javascript" th:src="@{/js/jquery.min.js}"></script>
+    <script type="text/javascript" th:src="@{/js/vector.js}"></script>
+    <script type="text/javascript" th:src="@{/js/vue.min.js}"></script>
+    <script type="text/javascript" th:src="@{/js/axios.min.js}"></script>
+    <script type="text/javascript" th:src="@{/js/semantic.min.js}"></script>
+    <script type="text/javascript">
+        $(function () {
+            const data1 = {
+                uri: 'atlases',
+                atlas: {id:0,name:''}
+            };
+            const vue = new Vue({
+                el: '#workArea',
+                data: data1,
+                mounted:function () {
+                    this.getAtlas();
+                },
+                methods: {
+                    //获取图集
+                    getAtlas: function () {
+                        let aid = getUrlParms("aid");
+                        let url = "atlases/" + aid;
+                        axios.get(url).then(function (response) {
+                            vue.atlas = response.data;
+                        })
+                    },
+                    //更新
+                    update: function () {
+                        let url = this.uri + "/" + this.atlas.id + "?name=" + this.atlas.name;
+                        axios.put(url).then(function () {
+                            alert("修改成功");
+                            window.location.href = "admin_atlas_list";
+                        })
+                    }
+                }
+            });
+
+            //获取地址栏参数的函数
+            function getUrlParms(para){
+                let search = location.search; //页面URL的查询部分字符串
+                let arrPara= new Array(); //参数数组。数组单项为包含参数名和参数值的字符串，如“para=value”
+                let arrVal= new Array(); //参数值数组。用于存储查找到的参数值
+                if(search !== ""){
+                    let index=0;
+                    search=search.substr(1); //去除开头的“?”
+                    arrPara=search.split("&");
+
+                    for(i in arrPara){
+                        let paraPre=para+"="; //参数前缀。即参数名+“=”，如“para=”
+                        if(arrPara[i].indexOf(paraPre) === 0 && paraPre.length<arrPara[i].length){
+                            arrVal[index]=decodeURI(arrPara[i].substr(paraPre.length)); //顺带URI解码避免出现乱码
+                            index++;
+                        }
+                    }
+                }
+                if(arrVal.length === 1){
+                    return arrVal[0];
+                }else if(arrVal.length === 0){
+                    return null;
+                }else{
+                    return arrVal;
+                }
+            }
+        })
+    </script>
+</body>
+</html>

@@ -1,0 +1,220 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.w3.org/1999/xhtml">
+<head>
+    <meta charset="utf-8">
+    <title>博客列表</title>
+    <link rel="stylesheet" type="text/css" th:href="@{/css/me.css}">
+    <link rel="stylesheet" type="text/css" th:href="@{/css/animate.css}" />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/semantic-ui/2.2.4/semantic.min.css">
+</head>
+<body style="background-color: #e2dcdc;">
+    <div id="workArea">
+        <div class="top02" style="background-color:#fff;">
+            <div class="top02_center" style="width:1200px;margin:0 auto;">
+                <div class="nav">
+                    <ul>
+                        <li ><a href="admin_type_list">分类管理</a></li>
+                        <li ><a href="admin_blog_list">博客管理</a></li>
+                        <li ><a href="admin_atlas_list">图集管理</a></li>
+                        <li ><a href="admin_author_info">信息管理</a></li>
+                    </ul>
+                    <ul>
+                        <li style="width: 78px;float:right;">
+                            <a style="font-size: 12px;float: left; width: 75px;color: darkorange;" href="admin_logout" >
+                                退出
+                            </a>
+                        </li>
+                        <li style="width: 78px;float:right;">
+                            <a style="font-size: 12px;float: left; width: 75px;color: darkorange;" href="#" th:text="${session.user.nickname}">
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+        <div style="height: 40px;"></div>
+
+        <div class="m-container m-padded-tb-big animated fadeIn">
+            <div class="ui container">
+                <div class="ui segment attached form" style="border: none;">
+                    <div class="inline fields">
+                        <div class="field">
+                            <label>
+                                <input type="text" v-model="keyword" name="title" placeholder="标题" />
+                            </label>
+                        </div>
+                        <div class="field">
+                            <div class="ui labeled input">
+                                <div class="ui label">分类</div>
+                                <select v-model="bean.type.id" class="ui search dropdown">
+                                    <option v-for="type in types" :value="type.id" :key="type.id" v-model="bean.type.id">
+                                        {{ type.name}}
+                                    </option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="field">
+                            <a @click="search" type="button" id="search-btn" class="ui mini teal basic button"><i class="search icon"></i>搜索</a>
+                            <a href="admin_type_input"  type="button" class="ui mini teal basic button"><i class="search icon"></i>新增分类</a>
+                        </div>
+                    </div>
+                </div>
+                <div class="ui segment attached"  id="table-container">
+                    <table class="ui compact table">
+                        <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>标题</th>
+                            <th>类型</th>
+                            <th>推荐</th>
+                            <th>状态</th>
+                            <th>更新时间</th>
+                            <th>操作</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <tr v-for="blog in blogs">
+                            <td >{{blog.id}}</td>
+                            <td >{{blog.title}}</td>
+                            <td >{{blog.type.name}}</td>
+                            <td v-text="blog.recommend ?'是':'否'">{{blog.recommend}}</td>
+                            <td v-text="blog.publish ?'已发布':'草稿'">{{blog.publish}}</td>
+                            <td >{{blog.updateDate}}</td>
+                            <td>
+                                <a :href="'admin_blog_input?bid=' + blog.id"  class="ui mini green button">编辑</a>
+                                <a @click="deleteBean(blog.id)" href="#"  class="ui mini red button">删除</a>
+                            </td>
+                        </tr>
+                        </tbody>
+                        <tfoot>
+                        <tr>
+                            <th colspan="7" style="text-align: center;">
+                                <div class="ui mini pagination menu">
+                                    <a :class="{ disabled: pagination.first }" class="icon item" href="#nowhere" @click="jump('first')">
+                                        <i class="angle double left icon"></i>
+                                    </a>
+                                    <a :class="{ disabled: !pagination.hasPrevious }" class="icon item">
+                                        <i class="angle left icon"></i>
+                                    </a>
+
+                                    <div v-for="i in pagination.navigatepageNums" class="disabled item">
+                                        <a href="#nowhere" @click="jumpByNumber(i-1)" >{{i}}</a>
+                                    </div>
+                                    <a :class="{ disabled: !pagination.hasNext }" class="icon item" href="#nowhere" @click="jump('next')">
+                                        <i class="angle right icon"></i>
+                                    </a>
+                                    <a :class="{ disabled: pagination.last }" class="icon item" href="#nowhere" @click="jump('last')">
+                                        <i class="angle double right icon"></i>
+                                    </a>
+                                </div>
+                                <a href="admin_blog_input" class="ui mini right floated teal basic button">新增文章</a>
+                            </th>
+                        </tr>
+                        </tfoot>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script type="text/javascript" th:src="@{/js/jquery.min.js}"></script>
+    <script type="text/javascript" th:src="@{/js/vue.min.js}"></script>
+    <script type="text/javascript" th:src="@{/js/axios.min.js}"></script>
+    <script type="text/javascript" th:src="@{/js/semantic.min.js}"></script>
+    <script type="text/javascript">
+        $(function () {
+            const data1 = {
+                blogs:[],
+                pagination:{},
+                types:[],
+                keyword:'',
+                bean:{type:{id:0,name:''}}
+            };
+
+            const vue = new Vue({
+                el: '#workArea',
+                data: data1,
+                mounted: function () {
+                    this.list(0);
+                    this.getType();
+                },
+                methods:{
+                    //获取文章分类专题
+                    getType: function() {
+                        let url = "types";
+                        axios.get(url).then(function (response) {
+                            vue.types = response.data;
+                        })
+                    },
+                    //获得全部文章
+                    list: function(start) {
+                        let url = "blogs?start=" + start;
+                        axios.get(url).then(function (response) {
+                            vue.pagination = response.data;
+                            vue.blogs = response.data.content;
+                        })
+                    },
+                    //搜索
+                    search: function() {
+                        let url = "search?keyword=" + this.keyword + "&tid=" + this.bean.type.id;
+                        alert(url);
+                        axios.get(url).then(function (response) {
+                            vue.blogs = response.data;
+                        })
+
+                    },
+                    //删除
+                    deleteBean: function(bid) {
+                        if(!checkDeleteLink())
+                            return;
+                        let url = "blogs/" + bid;
+                        axios.delete(url).then(function (response) {
+                            if(0 !== response.data.length){
+                                alert(response.data);
+                            }
+                            else{
+                                alert("删除成功")
+                                vue.list(0);
+                            }
+                        })
+                    },
+                    jump: function(page){
+                        jump(page,vue);
+                    },
+                    jumpByNumber: function(start){
+                        jumpByNumber(start,vue);
+                    }
+                }
+
+            });
+
+            //确实是否要删除
+            function checkDeleteLink(){
+                const confirmDelete = confirm("确认要删除？");
+                if(confirmDelete)
+                    return true;
+                return false;
+            }
+            //跳转函数
+            function jump(page,vue){
+                if('first'=== page && !vue.pagination.first)
+                    vue.list(0);
+
+                else if('pre'=== page &&	vue.pagination.hasPrevious )
+                    vue.list(vue.pagination.number-1);
+
+                else if('next'=== page && vue.pagination.hasNext)
+                    vue.list(vue.pagination.number+1);
+
+                else if('last'=== page && !vue.pagination.last)
+                    vue.list(vue.pagination.totalPages-1);
+            }
+            //跳转函数
+            function jumpByNumber(start,vue){
+                if(start !== vue.pagination.number)
+                    vue.list(start);
+            }
+        })
+    </script>
+</body>
+</html>

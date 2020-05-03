@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.w3.org/1999/xhtml">
+<head>
+    <meta charset="UTF-8">
+    <title>旅行 日记</title>
+    <link rel="stylesheet" type="text/css" th:href="@{/css/me.css}">
+    <link rel="stylesheet" type="text/css" th:href="@{/css/animate.css}" />
+    <link rel="stylesheet" type="text/css" th:href="@{/css/swiper.min.css}" />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/semantic-ui/2.2.4/semantic.min.css"></head>
+    <style>
+        .swiper-container {
+            width: 100%;
+            height: 100%;
+        }
+        .swiper-slide {
+            text-align: center;
+            font-size: 18px;
+            background: #fff;
+            /* Center slide text vertically */
+            display: -webkit-box;
+            display: -ms-flexbox;
+            display: -webkit-flex;
+            display: flex;
+            -webkit-box-pack: center;
+            -ms-flex-pack: center;
+            -webkit-justify-content: center;
+            justify-content: center;
+            -webkit-box-align: center;
+            -ms-flex-align: center;
+            -webkit-align-items: center;
+            align-items: center;
+        }
+    </style>
+</head>
+<body>
+    <!-- 导航 -->
+    <div id="workArea">
+        <div class="top02" style="background-color:#fff;">
+            <div class="top02_center" style="width:1200px;margin:0 auto;">
+                <div class="nav">
+                    <ul>
+                        <li><a href="fore_blog_list">首页</a></li>
+                        <li><a href="fore_blog_type">分类查询</a></li>
+                        <li><a href="fore_question_travel">旅行日记</a></li>
+                        <li><a href="fore_time_axis">归档图案</a></li>
+                        <li><a href="fore_blog_author">关于我</a></li>
+                    </ul>
+                    <ul>
+                        <li style="width: 45px;float:right;">
+                            <a href="admin_logout" th:if="${null != session.user}" style="font-size: 12px;float: left; width: 45px;color: darkorange;">注销</a>
+                        </li>
+                        <li style="width: 70px;float:right;">
+                            <a th:if="${null != session.user}" th:text="${session.user.nickname}" style="font-size: 12px;float: left; width: 70px;color: darkorange;"></a>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+        <div style="height: 20px;"></div>
+        <div id="waypoint">
+            <div class="m-container m-padded-tb-big animated fadeIn">
+                <div class="ui horizontal divider" style="color: green">{{"NEWS__" + atlas.name + "__" + atlas.createDate.substring(0,10) }}</div>
+                <div class="ui container">
+                    <!-- Swiper -->
+                    <div class="swiper-container m-shadow-small">
+                        <div class="swiper-wrapper">
+                            <div class="swiper-slide" v-for="picture in atlas.pictures">
+                                <img :src="'img/pictureDetail/' + picture.id + '.jpg' " style="width: 100%; height: 580px;" />
+                            </div>
+                        </div>
+                        <!-- Add Pagination -->
+                        <div class="swiper-pagination"></div>
+                    </div>
+                </div>
+                <div class="ui horizontal divider" style="margin-top: 90px; color: green">PHOTO SHOW</div>
+                <div class="ui container">
+                    <div class="ui top attached segment" style="border: none;">
+                        <div class="ui stackable grid">
+                            <!--图片列表-->
+                            <div class="ui cards" style="text-align: center;margin: 5px auto;">
+                                <div v-for="atlas in atlases" class="card card_item" style="width: 30%;margin-left: 2%;margin-top: 7%;">
+                                    <div class="content">
+                                        <div style="">
+                                            <a :href="'fore_travel_photo?aid=' + atlas.id">
+                                                <img :src="'img/pictureDetail/' + atlas.firstPictureID + '.jpg' " style="width: 100%;height: 150px;">
+                                            </a>
+                                        </div>
+                                        <div style="margin-top: 25px;" class="header">{{atlas.name}} <i class="location arrow icon green"></i></div>
+                                        <div class="description" style="font-size: 13px;width: 75%;margin: 10px auto;">
+                                            在0到1之间摸索的终身学习者，热爱生活、热爱美食的程序鸟，在0到1之间摸索的终身学习者，热爱生活、热爱美食的程序鸟，
+                                        </div>
+                                        <div class="positive ui button circular mini">
+                                            查看图集
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 辅助工具栏 -->
+        <div id="toolbar" class="m-padded m-fixed m-left-bottom-tiny toolbar animated fadeInLeft" style="display: none">
+            <div class="ui vertical icon buttons">
+                <div id="toTop-button" class="ui icon button green"><i class="chevron up icon"></i></div>
+            </div>
+        </div>
+    </div>
+
+
+    <script type="text/javascript" th:src="@{/js/jquery.min.js}" ></script>
+    <script src="https://cdn.jsdelivr.net/semantic-ui/2.2.4/semantic.min.js"></script>
+    <script type="text/javascript" th:src="@{/js/vue.min.js}"></script>
+    <script type="text/javascript" th:src="@{/js/axios.min.js}"></script>
+    <script type="text/javascript" th:src="@{/js/swiper.min.js}"></script>
+    <script src="//cdn.jsdelivr.net/npm/jquery.scrollto@2.1.2/jquery.scrollTo.min.js"></script>
+    <script type="text/javascript" th:src="@{/lib/waypoints/jquery.waypoints.js}"></script>
+    <script type="text/javascript">
+        $(function () {
+            var data1 = {
+                uri: 'atlases',
+                pictures:[],
+                atlas:'',
+                atlases:[]
+            };
+
+            var vue = new Vue({
+                el:'#workArea',
+                data: data1,
+                mounted: function () {
+                    this.getRecentlyUpload();
+                    this.getAtlas();
+                },
+                methods: {
+                    getRecentlyUpload: function () {
+                        let url = this.uri;
+                        axios.get(url).then(function (response) {
+                            vue.atlas = response.data;
+                            vue.$nextTick(function () {
+                                initSwiper();
+                            })
+                        })
+                    },
+                    getAtlas: function () {
+                        let url = this.uri + "/all";
+                        axios.get(url).then(function (response) {
+                            vue.atlases = response.data;
+                        })
+                    }
+                }
+            });
+        })
+
+        function initSwiper() {
+            var swiper = new Swiper('.swiper-container', {
+                pagination: {
+                    el: '.swiper-pagination',
+                }
+            });
+        }
+
+        //返回顶部
+        $('#toTop-button').click(function () {
+            $(window).scrollTo(0,500);
+        });
+
+        //顶点跟踪
+        var waypoint = new Waypoint({
+            element: document.getElementById('waypoint'),
+            handler: function(direction) {
+                if (direction === 'down') {
+                    $('#toolbar').show(100);
+                } else {
+                    $('#toolbar').fadeOut(5000);
+                }
+            }
+        })
+    </script>
+
+</body>
+</html>

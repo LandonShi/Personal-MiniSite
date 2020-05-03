@@ -1,0 +1,528 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.w3.org/1999/xhtml">
+<head>
+    <meta charset="UTF-8">
+    <title>作者主页 果函</title>
+    <link rel="stylesheet" type="text/css" th:href="@{/css/me.css}" />
+    <link rel="stylesheet" type="text/css" th:href="@{/css/animate.css}" />
+    <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/semantic-ui/2.2.4/semantic.min.css">
+<body>
+    <div id="workArea">
+        <div class="top02" style="background-color:#fff;">
+            <div class="top02_center" style="width:1200px;margin:0 auto;">
+                <div class="nav">
+                    <ul>
+                        <li><a href="fore_blog_list">首页</a></li>
+                        <li><a href="fore_blog_type">分类查询</a></li>
+                        <li><a href="fore_question_travel">旅行日记</a></li>
+                        <li><a href="fore_time_axis">归档图案</a></li>
+                        <li><a href="fore_blog_author">关于我</a></li>
+                    </ul>
+                    <ul>
+                        <li style="width: 45px;float:right;">
+                            <a href="admin_logout" th:if="${null != session.user}" style="font-size: 12px;float: left; width: 45px;color: darkorange;">注销</a>
+                        </li>
+                        <li style="width: 70px;float:right;">
+                            <a th:if="${null != session.user}" th:text="${session.user.nickname}" style="font-size: 12px;float: left; width: 70px;color: darkorange;"></a>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+        <div style="height: 40px;"></div>
+
+        <!-- 中间内容 -->
+        <div id="waypoint">
+            <div class="m-container m-padded-tb-big animated fadeIn">
+                <div class="ui stackable grid">
+                    <!--左边信息列表-->
+                    <div class="eleven wide column">
+                        <div class="ui top attached segment" style="border: none;">
+                            <div class="ui padded vertical segment m-padded-tb">
+                                <div class="ui middle aligned two column grid">
+                                    <div class="column" style="width: 75%;">
+                                        <div class="ui massive horizontal divided list">
+                                            <div class="item">
+                                                <div class="ui comments">
+                                                    <div class="comment">
+                                                        <a href="#nowhere" class="avatar">
+                                                            <img src="img/avatar/avatar3.jpg" style="border-radius: 50%;width: 75px;">
+                                                        </a>
+                                                        <div class="content">
+                                                            <a href="#" class="author" style="font-weight: 600;font-size: 20px;">
+                                                                {{ author.user.nickname}}<i class="man icon blue"></i>
+                                                            </a>
+                                                            <div class="text">
+                                                                <div class="ui celled horizontal list">
+                                                                    <div class="item">
+                                                                        <a style="font-size: 13px;color: black;">
+                                                                            <img src="img/other/github.png" style="width: 28px;" />
+                                                                        </a>
+                                                                    </div>
+                                                                    <div class="item">
+                                                                        <a style="font-size: 13px;color: black;">
+                                                                            <img src="img/other/bilibili-fill.png" style="width: 28px;" />
+                                                                        </a>
+                                                                    </div>
+                                                                    <div class="item">
+                                                                        <a style="font-size: 13px;color: black;">
+                                                                            <img src="img/other/acfun2.png" style="width: 28px;" />
+                                                                        </a>
+                                                                    </div>
+                                                                    <div class="item">
+                                                                        <a style="font-size: 13px;color: black;">
+                                                                            <img src="img/other/weibo.png" style="width: 28px;" />
+                                                                        </a>
+                                                                    </div>
+                                                                    <div class="item">
+                                                                        <a style="font-size: 13px;color: black;">
+                                                                            <img src="img/other/weichatpublic.png" style="width: 28px;" />
+                                                                        </a>
+                                                                    </div>
+                                                                    <div class="item">
+                                                                        <a style="font-size: 13px;color: black;">
+                                                                            <img src="img/other/zhihu.png" style="width: 28px;" />
+                                                                        </a>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="column right aligned" style="width: 25%;">
+                                        <a class="ui button green" style="width: 100%;border-radius: 20px;">点击了解</a>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="ui attached segment" style="border: none;">
+                            <div class="ui middle aligned grid" >
+                                <div class="column" style="width: 75%;">
+                                    <div class="nav">
+                                        <ul>
+                                            <li>
+                                                <a @click="showBlog" class="active item">
+                                                    <i class="newspaper icon yellow"></i> 热文
+                                                </a>
+                                            </li>
+                                            <li>
+                                                <a @click="showTime" class="item">
+                                                    <i class="alarm icon green"></i> 站长Info
+                                                </a>
+                                            </li>
+                                            <li >
+                                                <a @click="showComment" class="item">
+                                                    <i class="comments icon yellow"></i> 留言
+                                                </a>
+                                            </li>
+                                        </ul>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div v-show="blogFlag" class="ui attached segment" style="border: none;">
+                            <div class="ui padded vertical segment m-padded-tb">
+                                <div v-for="blog in blogs"  class="ui middle aligned mobile reversed stackable grid" style="border-bottom: solid 1px lightgray;">
+                                    <div class="eleven wide column">
+                                        <h3 class="ui header title_a">
+                                            <a target="_blank" :href="'fore_blog_detail?bid=' + blog.id">
+                                                    <span style="color: green;font-weight: 400;font-size: 14px">
+                                                        {{"[" + blog.flag + "]__"}}</span>
+                                                {{blog.title}}
+                                            </a>
+                                        </h3>
+                                        <p class="m-text" style="font-size: 12px;">
+                                            {{ blog.content.substring(0,120)}}
+                                        </p>
+                                        <div class="ui grid">
+                                            <div class="eleven wide column">
+                                                <div class="ui mini horizontal link list">
+                                                    <div class="item">
+                                                        <i class="calendar icon"></i> {{blog.createDate.substring(0,10)}}
+                                                    </div>
+                                                    <div class="item">
+                                                        <i class="eye icon"></i> {{blog.views}}
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="five wide column">
+                                        <a href="" target="_blank">
+                                            <img :src="'img/picture/' + blog.id + '.jpg'" alt="" class="ui rounded image">
+                                        </a>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div v-show="timeFlag" class="ui attached segment" style="border: none;">
+                            <div class="ui padded vertical segment m-padded-tb">
+                                <div  class="ui middle aligned mobile reversed stackable grid" style="border-bottom: solid 1px lightgray;">
+                                    <div class="ui middle aligned grid" style="width: 100%;">
+                                        <p class="text" style="line-height: 2; text-align: left;margin-bottom: 15px;">
+                                            {{ author.description}}
+                                        </p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div v-show="commentFlag" class="ui attached segment" style="border: none;">
+                            <div class="ui padded vertical segment m-padded-tb">
+                                <div  class="ui middle aligned mobile reversed stackable grid" style="border-bottom: solid 1px lightgray;">
+                                    <!-- 游客用户评论列表 -->
+                                    <div id="commentDiv" class="ui attached segment m-padded-lr-responsive m-padded-tb-large" style="border: none;margin: -25px auto;">
+                                        <div class="ui middle aligned two column grid">
+                                            <div class="column">
+                                                <div style="width: 2%;background-color: orangered;height: 20px; float: left"></div>
+                                                <div style="float: left;margin-left: 2%;font-weight: 600">本站留言总计 {{ comments.length + replyCount}}</div>
+                                            </div>
+                                            <div class="column right aligned">
+                                                <a @click="sortCreateTime(sort1)" href="#" style="font-size: 13px;color: gray;">按时间倒序</a>
+                                                <a @click="sortCreateTime(sort2)" href="#" style="font-size: 13px;color: gray;">按时间正序</a>
+                                            </div>
+                                        </div>
+                                        <div v-if="comments.length != 0" class="ui threaded comments attached" style="margin-top: 30px; border: none;max-width: 100%;margin-bottom: 55px;">
+                                            <div v-for="comment in comments" class="comment" style="margin-bottom: 25px;">
+                                                <a class="avatar">
+                                                    <img src="img/avatar/avatar3.jpg" alt="头像" />
+                                                </a>
+                                                <div class="content">
+                                                    <a class="author" style="font-size: 13px;font-weight: 400; color: gray;">{{comment.nickname}}</a>
+                                                    <div class="metadata">
+                                                        <span class="date">{{comment.createTime}}</span>
+                                                    </div>
+                                                    <div class="text" style="margin-top: 5px;font-size: 13px;">
+                                                        <span>{{comment.content}}</span>
+                                                    </div>
+                                                    <div class="action">
+                                                        <a @click="showReplyDiv(comment.id)" th:if="${null != session.user}" class="replyMan" href="#nowhere" style="font-size: 14px; margin-left: 10px; color: gray">
+                                                            <i class="comment icon"></i> 回复
+                                                        </a>
+                                                    </div>
+                                                </div>
+                                                <!-- 一级评论-->
+                                                <div class="comments">
+                                                    <div class="comment" v-for="reply in comment.replies">
+                                                        <a class="avatar">
+                                                            <img src="img/avatar/avatar2.jpg" alt="头像">
+                                                        </a>
+                                                        <div class="content">
+                                                            <a class="author" style="font-size: 13px;font-weight: 400; color: gray;">
+                                                                清风明月
+                                                            </a>
+                                                            <div class="metadata">
+                                                                <span class="date">{{reply.createTime}}</span>
+                                                            </div>
+                                                            <div class="text">
+                                                                <font style="color: gray;">回复</font>
+                                                                <font style="color: orange">{{comment.nickname}}</font>
+                                                                &nbsp;&nbsp;<span>{{reply.content}}</span>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <!-- 一级评论框 -->
+                                                <div :id="'replyTextarea' + comment.id" th:if="${null != session.user}" class="ui content replayContent" style="letter-spacing: 1px; color: gray;margin-top: 14px; display: none;">
+                                                    <div class="ui form">
+                                                        <div class="field">
+                                                            <label>
+                                                                <textarea v-model.trim="reply.content" name="content" placeholder=" 写下你的评论..." style="height: 100px;resize: none"></textarea>
+                                                            </label>
+                                                        </div>
+                                                        <div class="ui middle aligned two column grid">
+                                                            <div class="column">
+                                                                <span style="font-size: 12px;">请勿发布违规内容</span>
+                                                                <a style="color: gray; font-size: 18px;">
+                                                                    <i class="smile icon"></i>
+                                                                </a>
+                                                            </div>
+                                                            <div class="column right aligned">
+                                                                <a @click="sendReply(comment.id)" class="ui mini orange basic circular button m-mobile-wide">发布</a>
+                                                                <a @click="cancelReplyTextarea(comment.id)" class="ui mini basic button circular m-mobile-wide">取消</a>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div v-else class="ui middle aligned two column grid" style="text-align: center">
+                                            <div class="ui attached segment" style="text-align: center; border: none;">
+                                                <img src="img/other/cry1.png" style="width: 40px;" alt="没有" />
+                                                <br>
+                                                <span style="color: grey; font-size: 13px; font-family: 'Comic Sans MS'">no buddy comment...</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+                    <!--右边推荐列表-->
+                    <div class="five wide column">
+                        <div class="ui top attached segment" style="border: none;">
+                            <div class="ui middle aligned grid" style="margin-top: 12px;">
+                                <div class="column">
+                                    <div class="ui list">
+                                        <a class="item" style="margin-top: 7px;">
+                                            <i class="sun icon orange"></i>
+                                            <div class="content">
+                                                <div class="header">自封互联网优秀作者</div>
+                                            </div>
+                                        </a>
+                                        <a class="item" style="margin-top: 7px;">
+                                            <i class="trophy icon orange"></i>
+                                            <div class="content">
+                                                <div class="header" style="font-family: 'Comic Sans MS';">思维模型 No.1</div>
+                                            </div>
+                                        </a>
+                                        <a class="item" style="margin-top: 7px;">
+                                            <i class="lightning icon orange"></i>
+                                            <div class="content">
+                                                <div class="header" style="font-family: 'Comic Sans MS';">层次递进者</div>
+                                            </div>
+                                        </a>
+                                        <a class="item" style="margin-top: 7px;">
+                                            <i class="flag outline icon orange"></i>
+                                            <div class="content">
+                                                <div class="header">果函网版权</div>
+                                            </div>
+                                        </a>
+                                        <a class="item" style="margin-top: 7px;">
+                                            <i class="car icon orange"></i>
+                                            <div class="content">
+                                                <div class="header" style="font-family: 'Comic Sans MS';">yy Student Driver</div>
+                                            </div>
+                                        </a>
+                                        <a class="item" style="margin-top: 7px;">
+                                            <i class="travel icon orange"></i>
+                                            <div class="content">
+                                                <div class="header" style="font-family: 'Comic Sans MS';">旅行ing</div>
+                                            </div>
+                                        </a>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="ui middle aligned grid">
+                                <div class="column">
+                                    <div class="ui list">
+                                        <a class="item" style="margin-top: 7px;">
+                                            <i class="send icon green"></i>
+                                            <div class="content">
+                                                <div class="header">
+                                                    <span class="warming-span" style="color: green">在这里和站长说悄悄话  (ฅ´ω`ฅ)</span>
+                                                </div>
+                                            </div>
+                                        </a>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="ui middle aligned grid">
+                                <div class="column">
+                                    <div class="field">
+                                        <div class="ui left icon input" style="width: 100%;">
+                                            <i class="user icon green"></i>
+                                            <input v-model.trim="comment.nickname" type="text" name="nickname" placeholder="昵称">
+                                        </div>
+                                    </div>
+                                    <div class="field" style="margin-top: 15px;">
+                                        <div class="ui left icon input" style="width: 100%;">
+                                            <i class="mail icon green"></i>
+                                            <input v-model.trim="comment.email" type="text" name="email" placeholder="邮箱">
+                                        </div>
+                                    </div>
+                                    <div class="field" style="margin-top: 15px;">
+                                        <textarea v-model.trim="comment.content" style="height: 150px; resize: none;width: 100%; border: solid 1px lightgray;"></textarea>
+                                    </div>
+                                    <div class="field" style="margin-top: 15px;">
+                                        <div class="ui animated fade button fluid">
+                                            <div class="visible content">写好了吗 ≖‿≖✧</div>
+                                            <div class="hidden content">
+                                                <a @click="sendComment" style="color: black;">
+                                                    那点击这里提交吧 （●>∀<●）
+                                                </a>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 辅助工具栏 -->
+    <div id="toolbar" class="m-padded m-fixed m-left-bottom-tiny toolbar animated fadeInLeft" style="display: none">
+        <div class="ui vertical icon buttons">
+            <div id="toTop-button" class="ui icon button green"><i class="chevron up icon"></i></div>
+        </div>
+    </div>
+
+    <script type="text/javascript" th:src="@{/js/jquery.min.js}" ></script>
+    <script type="text/javascript" th:src="@{/js/semantic.min.js}"></script>
+    <script src="//cdn.jsdelivr.net/npm/jquery.scrollto@2.1.2/jquery.scrollTo.min.js"></script>
+    <script type="text/javascript" th:src="@{/lib/waypoints/jquery.waypoints.js}"></script>
+    <script type="text/javascript" th:src="@{/js/vue.min.js}"></script>
+    <script type="text/javascript" th:src="@{/js/axios.min.js}"></script>
+    <script type="text/javascript">
+        $(function () {
+            var data1 = {
+                author:'',
+                blogFlag: true,
+                timeFlag: false,
+                commentFlag: false,
+                blogs:[],
+                comment:{nickname:'', email:'', content:''},
+                comments: [],
+                reply:{content:''},
+                replyCount:'',
+                sort1:'desc',
+                sort2:'asc'
+            };
+
+            var vue = new Vue({
+                el:'#workArea',
+                data:data1,
+                mounted: function () {
+                    this.getAuthor();
+                    this.getHotBlog();
+                    this.getCommentWeb();
+                    this.getReplyCount();
+                },
+                methods:{
+                    //获取作者信息
+                    getAuthor: function () {
+                        let url = "authors/info";
+                        axios.get(url).then(function (response) {
+                            vue.author = response.data;
+                        })
+                    },
+                    //获取热点文章
+                    getHotBlog: function () {
+                        let url = "blogsTen";
+                        axios.get(url).then(function (response) {
+                            vue.blogs = response.data;
+                        })
+                    },
+                    //游客评论
+                    sendComment: function() {
+                        if(0 === this.comment.nickname.length){
+                            $("span.warming-span").html("大名呢！(╯‵□′)╯︵┻━┻ 掀桌");
+                            return;
+                        }
+                        if(0 === this.comment.email.length){
+                            $("span.warming-span").html("｡◕‿◕｡您的邮箱就要被我吃了");
+                            return;
+                        }
+                        if(0 === this.comment.content.length){
+                            $("span.warming-span").html("别羞涩呀 认真状 (..•˘_˘•..)");
+                            return;
+                        }
+                        let myReg = /^[-_A-Za-z0-9]+@([_A-Za-z0-9]+\.)+[A-Za-z0-9]{2,3}$/;
+                        if(!myReg.test(this.comment.email)) {
+                            $("span.warming-span").html("邮箱格式不对哦，buddy");
+                            return;
+                        }
+                        let url = "commentWeb";
+                        let form = new FormData();
+                        form.append("nickname", this.comment.nickname);
+                        form.append("email", this.comment.email);
+                        form.append("content", this.comment.content);
+                        axios.post(url,form).then(function () {
+                            alert("站长已经收到了，马上快马加鞭赶来，最佳查看回复时间是7.30，不要太急哦");
+                        })
+                    },
+                    //获取游客对整站评论列表
+                    getCommentWeb: function() {
+                        let bid = 50;  //专门用来存储游客评论的id
+                        let url = "comments?bid=" + bid;
+                        axios.get(url).then(function (response) {
+                            vue.comments = response.data;
+                        })
+                    },
+                    //显示站长回复div
+                    showReplyDiv: function(cid) {
+                        $("#replyTextarea" + cid).show();
+                    },
+                    //取消站长点击回复显示评论div
+                    cancelReplyTextarea: function(cid) {
+                        $("#replyTextarea" + cid).hide();
+                    },
+                    //站长评论
+                    sendReply: function (cid) {
+                        if(this.reply.content.length === 0) {
+                            alert("输入为空");
+                            return;
+                        }
+                        let url = "replies?cid=" + cid + "&content=" + this.reply.content;
+                        axios.post(url).then(function () {
+                            alert("操作成功");
+                            vue.getComment();
+                        })
+                    },
+                    //按时间查询
+                    sortCreateTime: function(sort) {
+                        let bid = 50;
+                        let url = "commentsSort?bid=" + bid + "&sort=" + sort;
+                        axios.get(url).then(function (response) {
+                            vue.comments = response.data;
+                            vue.$nextTick(function () {
+                                $(window).scrollTo($('#commentDiv'),500);
+                            })
+                        })
+                    },
+                    //获取回复数量
+                    getReplyCount: function() {
+                        let bid = 50;
+                        let url = "replies/" + bid;
+                        axios.get(url).then(function (response) {
+                            vue.replyCount = response.data;
+                        })
+                    },
+                    //切换显示对应div
+                    showBlog: function () {
+                        this.blogFlag = true;
+                        this.timeFlag = false;
+                        this.commentFlag = false;
+                    },
+                    showTime: function () {
+                        this.blogFlag = false;
+                        this.timeFlag = true;
+                        this.commentFlag = false;
+                    },
+                    showComment: function () {
+                        this.blogFlag = false;
+                        this.timeFlag = false;
+                        this.commentFlag = true;
+                    }
+                }
+            });
+            //返回顶部
+            $('#toTop-button').click(function () {
+                $(window).scrollTo(0,500);
+            });
+            //顶点跟踪
+            var waypoint = new Waypoint({
+                element: document.getElementById('waypoint'),
+                handler: function (direction) {
+                    if (direction === 'down') {
+                        $('#toolbar').show(100);
+                    } else {
+                        $('#toolbar').fadeOut(100);
+                    }
+                }
+            });
+        })
+    </script>
+</body>
+</html>

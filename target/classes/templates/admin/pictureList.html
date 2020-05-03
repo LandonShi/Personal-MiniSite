@@ -1,0 +1,225 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.w3.org/1999/xhtml">
+<head>
+    <meta charset="UTF-8">
+    <title>图片 上传</title>
+    <link rel="stylesheet" th:href="@{/css/me.css}">
+    <link rel="stylesheet" th:href="@{/css/animate.css}" />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/semantic-ui/2.2.4/semantic.min.css">
+</head>
+<body style="background-color: #dedede">
+    <div id="workArea">
+        <div class="top02" style="background-color:#fff;">
+            <div class="top02_center" style="width:1200px;margin:0 auto;">
+                <div class="nav">
+                    <ul>
+                        <li ><a href="admin_type_list">分类管理</a></li>
+                        <li ><a href="admin_blog_list">博客管理</a></li>
+                        <li ><a href="admin_atlas_list">图集管理</a></li>
+                        <li ><a href="admin_author_info">信息管理</a></li>
+                    </ul>
+                    <ul>
+                        <li style="width: 78px;float:right;">
+                            <a style="font-size: 12px;float: left; width: 75px;color: darkorange;" href="admin_logout" >
+                                退出
+                            </a>
+                        </li>
+                        <li style="width: 78px;float:right;">
+                            <a style="font-size: 12px;float: left; width: 75px;color: darkorange;" href="#" th:text="${session.user.nickname}">
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+        <div style="height: 40px;"></div>
+        <div class="m-container m-padded-tb-big">
+            <div class="ui container">
+                <div class="ui middle aligned sixteen column grid">
+                    <div class="sixteen wide column">
+                        <!-- 内容 -->
+                        <div class="ui attached segment">
+                            <div class="ui vertical segment m-padded-tb-large">
+                                <div class="ui mobile reversed stackable grid">
+                                    <div class="ui top attached segment" style="border: none">
+                                        <div class="ui middle aligned column grid">
+                                            <div class="column">
+                                                <h4 style="text-align: center;" class="ui teal header">上传图片</h4>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="ui attached segment" style="border: none">
+                                        <div class="ui middle aligned two column grid">
+                                            <div class="column">
+                                                <div class="ui form">
+                                                    <div class="field">
+                                                        <label style="color: teal">请输入图片名称</label>
+                                                        <input v-model.trim="title" type="text">
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="column right aligned">
+                                                <table style="width: 100%; text-align: center; color: black;">
+                                                    <tr>
+                                                        <td>请选择本地图片 宽度790 为佳</td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td>
+                                                            <input id="detailPic" type="file" @change="getDetailFile($event)" name="image" />
+                                                        </td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td style="text-align: center">
+                                                            <a @click="addDetail"  class="ui button teal mini">提 交</a>
+                                                        </td>
+                                                    </tr>
+                                                </table>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="ui attached segment" style="border: none">
+                                        <div class="ui vertical segment m-padded-tb-large">
+                                            <div class="ui mobile reversed stackable grid">
+                                                <!-- 分割线 -->
+                                                <div style="height: 15px;">
+                                                </div>
+                                                <table style="width: 100%; text-align: center;border: none" class="ui table">
+                                                    <thead >
+                                                    <tr>
+                                                        <th>ID</th>
+                                                        <th>标题</th>
+                                                        <th>图片缩略图</th>
+                                                        <th>删除</th>
+                                                    </tr>
+                                                    </thead>
+                                                    <tbody>
+                                                    <tr v-for="picture in pictures">
+                                                        <td>{{picture.id}}</td>
+                                                        <td>{{picture.title}}</td>
+                                                        <td>
+                                                            <a target="_blank" :href="'img/pictureDetail/' + picture.id + '.jpg'" title="点击查看原图">
+                                                                <img :src="'img/pictureThumbnail/' + picture.id + '.jpg'" />
+                                                            </a>
+                                                        </td>
+                                                        <td>
+                                                            <a @click="deleteBean(picture.id)" href="#nowhere" >
+                                                                <i class="ui remove icon red"></i>
+                                                            </a>
+                                                        </td>
+                                                    </tr>
+                                                    </tbody>
+                                                </table>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script type="text/javascript" th:src="@{/js/jquery.min.js}"></script>
+    <script type="text/javascript" th:src="@{/js/vector.js}"></script>
+    <script type="text/javascript" th:src="@{/js/vue.min.js}"></script>
+    <script type="text/javascript" th:src="@{/js/axios.min.js}"></script>
+    <script type="text/javascript" th:src="@{/js/semantic.min.js}"></script>
+    <script type="text/javascript">
+        $(function () {
+            const data1 = {
+                pictures:[],
+                detailFile:'',
+                uri:'pictures',
+                title:''
+            };
+            const vue = new Vue({
+                el: '#workArea',
+                data: data1,
+                mounted:function () {
+                    this.listDetails();
+                },
+                methods: {
+                    //查询当前图集下的图片列表
+                    listDetails:function(){
+                        let aid = getUrlParms("aid");
+                        let url =  "pictures/" + aid;
+                        axios.get(url).then(function(response) {
+                            vue.pictures = response.data;
+                        });
+                    },
+                    //增加图片
+                    addDetail: function () {
+                        if(!checkEmpty(this.title, "图片名称"))
+                            return;
+                        if(!checkEmpty(this.detailFile, "图片"))
+                            return;
+                        let aid = getUrlParms("aid");
+                        let url = this.uri + "?aid=" + aid + "&title=" + this.title;
+                        let formData = new FormData();
+                        formData.append("image", this.detailFile);
+                        axios.post(url,formData).then(function(){
+                            vue.listDetails();
+                            $("#detailPic").val('');
+                            vue.detailFile = null;
+                        });
+                    },
+                    //删除图片
+                    deleteBean: function(pid) {
+                        if(!checkDeleteLink())
+                            return;
+                        let url = "pictures/" + pid;
+                        axios.delete(url).then(function () {
+                            vue.listDetails();
+                        })
+                    },
+                    getDetailFile: function (event) {
+                        this.detailFile = event.target.files[0];
+                    }
+                }
+            });
+            //判断是否为空
+            function checkEmpty(value,text){
+                if(null==value || value.length==0){
+                    alert(text+ "不能为空");
+                    return false;
+                }
+                return true;
+            }
+            //确实是否要删除
+            function checkDeleteLink(){
+                var confirmDelete = confirm("确认要删除？");
+                if(confirmDelete)
+                    return true;
+                return false;
+            }
+            //获取地址栏参数的函数
+            function getUrlParms(para){
+                let search = location.search; //页面URL的查询部分字符串
+                let arrPara= new Array(); //参数数组。数组单项为包含参数名和参数值的字符串，如“para=value”
+                let arrVal= new Array(); //参数值数组。用于存储查找到的参数值
+                if(search !== ""){
+                    let index=0;
+                    search=search.substr(1); //去除开头的“?”
+                    arrPara=search.split("&");
+
+                    for(i in arrPara){
+                        let paraPre=para+"="; //参数前缀。即参数名+“=”，如“para=”
+                        if(arrPara[i].indexOf(paraPre) === 0 && paraPre.length<arrPara[i].length){
+                            arrVal[index]=decodeURI(arrPara[i].substr(paraPre.length)); //顺带URI解码避免出现乱码
+                            index++;
+                        }
+                    }
+                }
+                if(arrVal.length === 1){
+                    return arrVal[0];
+                }else if(arrVal.length === 0){
+                    return null;
+                }else{
+                    return arrVal;
+                }
+            }
+        })
+    </script>
+</body>
+</html>

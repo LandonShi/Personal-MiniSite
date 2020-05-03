@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.w3.org/1999/xhtml">
+<head>
+	<meta charset="UTF-8">
+	<title>管理员登录</title>
+	<link rel="stylesheet" type="text/css" th:href="@{/css/style.css}">
+	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/semantic-ui@2.4.2/dist/semantic.min.css">	
+</head>
+<body>
+	<div id="container">
+		<div id="output">
+			<div class="containerT">
+				<h1>管理员登录</h1>
+				<div id="formTable">
+					<form class="form" id="entry_form">
+						<input  v-model="user.username" name="name" type="text" placeholder="请输入用户名" id="entry_name">
+						<input  v-model="user.password" name="password" type="password" placeholder="请输入密码" id="entry_password">
+						<button @click="login" type="button" id="entry_btn" class="ui button orange basic inverted">登  录</button>
+						<div class="ui message negetive loginErrorMessageDiv" style="visibility: hidden;">
+							<span class="errorMessage">请输入账号名或密码</span>
+						</div>
+				    </form>
+				</div>
+			</div>
+		</div>
+	</div>
+	<script type="text/javascript" src="../../static/js/jquery.min.js" th:src="@{/js/jquery.min.js}"></script>
+	<script type="text/javascript" src="../../static/js/vector.js" th:src="@{/js/vector.js}"></script>
+	<script type="text/javascript" src="/js/vue.min.js" th:src="@{/js/vue.min.js}"></script>
+	<script type="text/javascript" src="/js/axios.min.js" th:src="@{/js/axios.min.js}"></script>
+	<script type="text/javascript">
+		$(function(){
+			Victor("container", "output");   //登陆背景函数
+			$("#entry_name").focus();
+			$(document).keydown(function(event){
+				if(event.keyCode === 13){
+					$("#entry_btn").click();
+				}
+			});
+
+			const path = "admin_index";
+			const data4Vue = {
+				uri: 'login',
+				result: [],  //响应状态集合 为0，则表示登录成功，1表示失败
+				user: {username: '', password: ''}
+			};
+
+			const vue = new Vue({
+				el: '#formTable',
+				data: data4Vue,
+				methods: {
+					login: function () {
+						let url = this.uri;
+						if (0 === this.user.username.length) {
+							$("span.errorMessage").html("请输入用户名");
+							$("div.loginErrorMessageDiv").css("visibility", "visible");
+							return;
+						}
+						if (0 === this.user.password.length) {
+							$("span.errorMessage").html("请输入密码");
+							$("div.loginErrorMessageDiv").css("visibility", "visible");
+							return;
+						}
+						axios.post(url, this.user).then(function (response) {
+							const result = response.data;
+							if (result.code === 0) {
+								location.href = path;  //如果后台返回了0，也就是较好校验成功，那么打开该url
+							} else {
+								$("span.errorMessage").html(result.message);
+								$("div.loginErrorMessageDiv").css("visibility", "visible");
+							}
+						});
+					}
+				}
+			});
+		})
+	</script>
+</body>
+</html>

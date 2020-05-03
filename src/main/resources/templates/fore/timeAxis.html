@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.w3.org/1999/xhtml">
+<head>
+    <meta charset="utf-8">
+    <title>归档图案</title>
+    <link rel="stylesheet" type="text/css" th:href="@{/css/me.css}">
+    <link rel="stylesheet" type="text/css" th:href="@{/css/animate.css}" />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/semantic-ui/2.2.4/semantic.min.css">
+</head>
+<body style="background: #f7f7f7">
+
+    <div id="workArea">
+        <!-- 导航 -->
+        <div class="top02" style="background-color:#fff;">
+            <div class="top02_center" style="width:1200px;margin:0 auto;">
+                <div class="nav">
+                    <ul>
+                        <li><a href="fore_blog_list">首页</a></li>
+                        <li><a href="fore_blog_type">分类查询</a></li>
+                        <li><a href="fore_question_travel">旅行日记</a></li>
+                        <li><a href="fore_time_axis">归档图案</a></li>
+                        <li><a href="fore_blog_author">关于我</a></li>
+                    </ul>
+                    <ul>
+                        <li style="width: 45px;float:right;">
+                            <a href="admin_logout" th:if="${null != session.user}" style="font-size: 12px;float: left; width: 45px;color: darkorange;">注销</a>
+                        </li>
+                        <li style="width: 70px;float:right;">
+                            <a th:if="${null != session.user}" th:text="${session.user.nickname}" style="font-size: 12px;float: left; width: 70px;color: darkorange;"></a>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+        <div style="height: 40px;"></div>
+        <!-- 中间内容 -->
+        <div id="waypoint">
+            <div  class="m-container-small m-padded-tb-big">
+                <div class="ui container">
+                    <!--header-->
+                    <div class="ui top attached padded segment" style="border: none">
+                        <div class="ui middle aligned two column grid">
+                            <div class="column">
+                                <h4 class="ui teal header">归档日记</h4>
+                            </div>
+                            <div class="right aligned column">
+                                共写了<h2 class="ui orange header m-inline-block m-text-thin"> {{blogs.length}} </h2> 篇文章
+                            </div>
+                        </div>
+                    </div>
+                    <h3 class="ui center aligned header orange">2020</h3>
+                    <div class="ui fluid vertical menu">
+                        <a v-for="blog in blogs" :href="'fore_blog_detail?bid=' + blog.id" target="_blank" class="item">
+                            <span>
+                                <i class="mini teal circle icon"></i> &nbsp;&nbsp;&nbsp;
+                                <span>{{blog.title}}</span>
+                                /
+                                <span style="color: orange;">{{blog.createDate}}</span>
+                            </span>
+                            <div class="ui green left pointing label">{{blog.flag}}</div>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script type="text/javascript" th:src="@{/js/jquery.min.js}" ></script>
+    <script type="text/javascript" th:src="@{/js/semantic.min.js}"></script>
+    <script src="//cdn.jsdelivr.net/npm/jquery.scrollto@2.1.2/jquery.scrollTo.min.js"></script>
+    <script type="text/javascript" th:src="@{/lib/waypoints/jquery.waypoints.js}"></script>
+    <script type="text/javascript" th:src="@{/js/vue.min.js}"></script>
+    <script type="text/javascript" th:src="@{/js/axios.min.js}"></script>
+    <script type="text/javascript">
+        $(function() {
+            const data1 = {
+                blogs:[]
+            };
+
+            const vue = new Vue({
+                el: '#workArea',
+                data: data1,
+                mounted: function () {
+                    this.getBlogs();
+                },
+                methods: {
+                    getBlogs: function () {
+                        let url = "blogsAll";
+                        axios.get(url).then(function (response) {
+                            vue.blogs = response.data;
+                        })
+                    }
+                }
+            });
+            //返回顶部
+            $('#toTop-button').click(function () {
+                $(window).scrollTo(0,500);
+            });
+            //顶点跟踪
+            const waypoint = new Waypoint({
+                element: document.getElementById('waypoint'),
+                handler: function (direction) {
+                    if (direction === 'down') {
+                        $('#toolbar').show(100);
+                    } else {
+                        $('#toolbar').fadeOut(100);
+                    }
+                }
+            });
+        });
+    </script>
+</body>
+</html>
