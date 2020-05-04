@@ -16,5 +16,8 @@ SemanticUI + Springboot + SpringDataJPA + Vue.js + Mysql + IDEA
 
 #### 前台截图
 
+很遗憾，无论我怎么修改配置，查询解决办法都无法显示项目截图，被这个搞乏了，有兴趣的朋友可以跳转至码云查看，点击这里：
+[我的码云链接](https://gitee.com/shishaop/personal_website)
+
 
 
